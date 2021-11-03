@@ -1,0 +1,25 @@
+!alias passive embed {{args,raw=&ARGS&,character()}}
+{{skill,help=([x[0] for x in raw.skills if args and args[0].lower().replace(" ","") in x[0].lower()]+["perception"])[0],args and args[0] in "help?"}}
+{{eff=raw.skills[skill].adv}}
+ch=character()
+cc="Wild Talent Die"
+ccex=ch.cc_exists(cc)
+
+if not ccex:
+  return
+
+intSize=ch.get_cc(cc)
+addTxt=""
+if (intSize == 0):
+   return f""" -f "Wild Talent|Your die has run out, use psi replenishment or take a long rest to use it again" """
+
+else:
+  size = (intSize + 1) 
+
+
+  
+{{wt,adv,dis,b=" +4 [Wild Talent]" if skill in ["perception","insight","animal handling","medicine","survival"] else "","+5 [advantage]" if not ("dis" in args or eff==False) and ("adv" in args or eff) else "","-5 [disadvantage]" if not ("adv" in args or eff) and ("dis" in args or eff==False) else "",'+'+argparse(args).join('b','+') if argparse(args).last('b') else ''}}
+-title "<name> {{'needs help using' if help else 'uses'}} their Passive {{'Skills' if help else skill.replace('H',' H').replace('O',' O').title()}}!"
+-desc "{{"`!passive` with no skill passed into it will return your Passive Perception. Passing a different skill will call that passive skill.\n\nUse `-b #` or `-b XdY` to add conditional bonuses.\n\n`!passive` accepts the `adv` and `dis` args to modify your passive skills on the fly, and also checks for constant adv/dis stored per skill.\n\nIf you have the Observant feat added via `!manage` or in a cvar named `feats`, `!passive` will properly apply the +5 bonus to your passive Perception and Investigation scores." if help else vroll(f"10+{raw.skills[skill].value}{wt}{adv}{dis}{b}")}}"
+-color <color> -thumb <image>
+-footer "!passive [skill name] [adv/dis] [-b #] | !passive ?"
